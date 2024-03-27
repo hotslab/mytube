@@ -1,8 +1,8 @@
 {
-  "name": "youtube-clone",
+  "name": "mytube",
   "version": "0.0.1",
-  "description": "A youtube interface clone",
-  "productName": "Youtube Clone",
+  "description": "A simple video platform built with Quasar",
+  "productName": "MyTube",
   "author": "Joseph Nyahuye <joseph.nyahuye@gmail.com>",
   "private": true,
   "scripts": {
