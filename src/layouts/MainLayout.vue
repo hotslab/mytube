@@ -3,6 +3,7 @@
     <q-header class="bg-white text-black tw-pb-[2px]">
       <q-toolbar class="tw-h-[56px]">
         <q-btn
+          v-if="!hideLogo"
           flat
           dense
           round
@@ -12,125 +13,106 @@
           style="padding: 8px"
         />
         <img
+          v-if="!hideLogo"
           src="~assets/YouTubeLogoVector.svg"
           alt="Youtube Logo"
           class="tw-h-[20px] tw-w-[90px] tw-m-[8px]"
         />
-        <!-- <q-space /> -->
+        <q-space />
         <VideoSearch />
+        {{ windowWidth }}
         <q-space />
         <UserProfile />
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      :width="screenWidth"
+      v-if="noOverlay"
+      :width="noOverlayWidth"
       v-model="leftDrawerOpen"
-      :overlay="overlay"
       show-if-above
-      bordered
+      class="tw-border-red-600 tw-border-[5px]"
     >
-      <q-list>
-        <q-item-label header class="tw-px-3 tw-py-2">
-          <div class="tw-flex tw-justify-start tw-items-center">
-            <q-btn
-              flat
-              dense
-              round
-              icon="menu"
-              aria-label="Menu"
-              @click="toggleLeftDrawer"
-              style="padding: 8px"
-            />
-            <img
-              src="~assets/YouTubeLogoVector.svg"
-              alt="Youtube Logo"
-              class="tw-h-[20px] tw-w-[90px] tw-m-[8px]"
-            />
-          </div>
-        </q-item-label>
-
-        <VideoLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
+      <VideoUrls @click="toggleLeftDrawer" :width="windowWidth" />
+    </q-drawer>
+    <q-drawer
+      v-else
+      overlay
+      :width="240"
+      v-model="leftDrawerOpen"
+      show-if-above
+      class="tw-border-green-600 tw-border-[5px]"
+    >
+      <VideoUrls @click="toggleLeftDrawer" :width="windowWidth" />
     </q-drawer>
 
-    <q-page-container class="tw-flex tw-justify-start tw-items-start tw-gap-0">
-      <!-- <q-list :class="pageDrawer">
-        <VideoLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list> -->
+    <q-page-container class="tw-flex tw-justify-start tw-items-start tw-gap-1">
+      <VideoUrls
+        v-if="showSideBar"
+        hide-header
+        hide-detail
+        @click="toggleLeftDrawer"
+        :width="windowWidth"
+      />
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { useQuasar } from 'quasar';
-import { computed, reactive, ref } from 'vue';
-import VideoLink, { VideoLinkProps } from 'components/VideoLink.vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import VideoSearch from 'components/VideoSearch.vue';
+import VideoUrls from 'components/VideoUrls.vue';
 import UserProfile from 'components/UserProfile.vue';
+import { watch } from 'vue';
 
 defineOptions({
   name: 'MainLayout',
 });
 
-const $q = reactive(useQuasar());
-
-const linksList: VideoLinkProps[] = [
-  {
-    title: 'Home',
-    caption: 'quasar.dev',
-    icon: 'o_home',
-    link: '#',
-  },
-  {
-    title: 'Shorts',
-    caption: 'github.com/quasarframework',
-    icon: 'o_music_video',
-    link: '#',
-  },
-  {
-    title: 'Subscriptions',
-    caption: 'chat.quasar.dev',
-    icon: 'o_video_library',
-    link: '#',
-  },
-  {
-    title: 'History',
-    caption: '@quasarframework',
-    icon: 'o_history',
-    link: '#',
-  },
-  {
-    title: 'Watch Later',
-    caption: 'forum.quasar.dev',
-    icon: 'o_schedule',
-    link: '#',
-  },
-];
+let windowWidth = ref(window.innerWidth);
+let noOverlay = ref(false);
+let noOverlayWidth = ref(240);
+let showSideBar = ref(false);
+let hideLogo = ref(false);
 
 const leftDrawerOpen = ref(false);
 
 function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
+  if (windowWidth.value > 1300) leftDrawerOpen.value = true;
+  else {
+    if (!noOverlay.value)
+      noOverlayWidth.value = leftDrawerOpen.value ? 240 : 64;
+    leftDrawerOpen.value = !leftDrawerOpen.value;
+  }
 }
 
-const overlay = computed(() => {
-  if ($q.screen.width < 790) return true;
-  if ($q.screen.width >= 790 && $q.screen.width < 1300) return true;
-  return false;
-});
+const onWidthChange = () => (windowWidth.value = window.innerWidth);
+onMounted(() => window.addEventListener('resize', onWidthChange));
+onUnmounted(() => window.removeEventListener('resize', onWidthChange));
 
-const screenWidth = computed(() => {
-  if ($q.screen.width < 790) return 240;
-  if ($q.screen.width >= 790 && $q.screen.width < 1300) return 64;
-  return 240;
-});
-
-// const pageDrawer = computed(() => {
-//   if ($q.screen.width < 790) return 'tw-hidden';
-//   if ($q.screen.width >= 790 && $q.screen.width < 1300)
-//     return 'tw-block tw-fixed tw-overflow-x-hidden tw-w-[64px]';
-//   return 'tw-block tw-fixed tw-overflow-x-hidden tw-w-[240px]';
-// });
+watch(
+  () => windowWidth.value,
+  (e: number) => {
+    console.log(`count is: ${e}`);
+    if (windowWidth.value >= 790 && windowWidth.value <= 1300) {
+      if (leftDrawerOpen.value) leftDrawerOpen.value = false;
+      noOverlay.value = false;
+      noOverlayWidth.value = 64;
+      showSideBar.value = true;
+      hideLogo.value = false;
+    } else if (windowWidth.value > 1300) {
+      noOverlay.value = true;
+      noOverlayWidth.value = 240;
+      showSideBar.value = false;
+      hideLogo.value = true;
+    } else if (windowWidth.value < 790) {
+      if (leftDrawerOpen.value) leftDrawerOpen.value = false;
+      noOverlay.value = false;
+      noOverlayWidth.value = 64;
+      showSideBar.value = false;
+      hideLogo.value = false;
+    }
+  }
+);
 </script>
