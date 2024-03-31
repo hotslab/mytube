@@ -1,6 +1,6 @@
 <template>
   <div
-    class="tw-full tw-flex tw-justify-end tw-items-center tw-pl-[50px] tw-pr-0 tw-py-0 tw-m-0 tw-gap-4"
+    class="tw-full tw-flex tw-justify-end tw-items-center tw-pl-[100px] tw-pr-0 tw-py-0 tw-m-0 tw-gap-4"
   >
     <div
       class="tw-w-full tw-flex tw-justify-center tw-border tw-border-gray-300 tw-items-center tw-rounded-2xl tw-gap-0 tw-p-0"

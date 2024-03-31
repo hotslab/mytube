@@ -16,7 +16,7 @@
           alt="Youtube Logo"
           class="tw-h-[20px] tw-w-[90px] tw-m-[8px]"
         />
-        <q-space />
+        <!-- <q-space /> -->
         <VideoSearch />
         <q-space />
         <UserProfile />
@@ -24,9 +24,9 @@
     </q-header>
 
     <q-drawer
-      :width="240"
-      class=""
+      :width="screenWidth"
       v-model="leftDrawerOpen"
+      :overlay="overlay"
       show-if-above
       bordered
     >
@@ -50,25 +50,23 @@
           </div>
         </q-item-label>
 
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
+        <VideoLink v-for="link in linksList" :key="link.title" v-bind="link" />
       </q-list>
     </q-drawer>
 
-    <q-page-container>
+    <q-page-container class="tw-flex tw-justify-start tw-items-start tw-gap-0">
+      <!-- <q-list :class="pageDrawer">
+        <VideoLink v-for="link in linksList" :key="link.title" v-bind="link" />
+      </q-list> -->
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
+import { useQuasar } from 'quasar';
+import { computed, reactive, ref } from 'vue';
+import VideoLink, { VideoLinkProps } from 'components/VideoLink.vue';
 import VideoSearch from 'components/VideoSearch.vue';
 import UserProfile from 'components/UserProfile.vue';
 
@@ -76,48 +74,38 @@ defineOptions({
   name: 'MainLayout',
 });
 
-const linksList: EssentialLinkProps[] = [
+const $q = reactive(useQuasar());
+
+const linksList: VideoLinkProps[] = [
   {
-    title: 'Docs',
+    title: 'Home',
     caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
+    icon: 'o_home',
+    link: '#',
   },
   {
-    title: 'Github',
+    title: 'Shorts',
     caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
+    icon: 'o_music_video',
+    link: '#',
   },
   {
-    title: 'Discord Chat Channel',
+    title: 'Subscriptions',
     caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
+    icon: 'o_video_library',
+    link: '#',
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
+    title: 'History',
     caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
+    icon: 'o_history',
+    link: '#',
   },
   {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
+    title: 'Watch Later',
+    caption: 'forum.quasar.dev',
+    icon: 'o_schedule',
+    link: '#',
   },
 ];
 
@@ -126,4 +114,23 @@ const leftDrawerOpen = ref(false);
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
+
+const overlay = computed(() => {
+  if ($q.screen.width < 790) return true;
+  if ($q.screen.width >= 790 && $q.screen.width < 1300) return true;
+  return false;
+});
+
+const screenWidth = computed(() => {
+  if ($q.screen.width < 790) return 240;
+  if ($q.screen.width >= 790 && $q.screen.width < 1300) return 64;
+  return 240;
+});
+
+// const pageDrawer = computed(() => {
+//   if ($q.screen.width < 790) return 'tw-hidden';
+//   if ($q.screen.width >= 790 && $q.screen.width < 1300)
+//     return 'tw-block tw-fixed tw-overflow-x-hidden tw-w-[64px]';
+//   return 'tw-block tw-fixed tw-overflow-x-hidden tw-w-[240px]';
+// });
 </script>
