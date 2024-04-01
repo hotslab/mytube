@@ -1,12 +1,21 @@
 <template>
-  <q-item clickable tag="a" target="_self" :href="props.link">
-    <q-item-section v-if="props.icon" avatar>
+  <q-item
+    clickable
+    tag="a"
+    target="_self"
+    :href="props.link"
+    class="tw-h-[56px]"
+  >
+    <q-item-section
+      v-if="props.icon"
+      avatar
+      class="tw-flex tw-justify-center tw-items-center"
+    >
       <q-icon :name="props.icon" style="font-weight: 100" />
     </q-item-section>
 
     <q-item-section v-if="!hideDetail">
       <q-item-label class="font-thin">{{ props.title }}</q-item-label>
-      <!-- <q-item-label caption>{{ caption }}</q-item-label> -->
     </q-item-section>
   </q-item>
 </template>

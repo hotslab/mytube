@@ -1,10 +1,8 @@
 <template>
   <q-list>
-    <VideoLinkHeader
-      v-if="!props.hideHeader"
-      @toggle-left-drawer="toggleLeftDrawer"
-      class="tw-flex tw-justify-start tw-items-center"
-    />
+    <q-item-label v-if="!hideHeader" header class="tw-px-3 tw-py-2 tw-h-[56px]">
+      <VideoLogo @toggle-left-drawer="toggleLeftDrawer" />
+    </q-item-label>
     <VideoLink
       v-for="(link, index) in linksList"
       :key="index"
@@ -20,7 +18,7 @@
 
 <script setup lang="ts">
 import VideoLink, { VideoLinkProps } from './VideoLink.vue';
-import VideoLinkHeader from './VideoLinkHeader.vue';
+import VideoLogo from './VideoLogo.vue';
 
 defineOptions({
   name: 'VideoUrls',

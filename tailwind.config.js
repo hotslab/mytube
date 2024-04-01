@@ -7,6 +7,7 @@ module.exports = {
       videoxs: '550px',
       videosm: '700px',
       videomd: '1000px',
+      videolg: '1300px',
     },
     extend: {},
   },
